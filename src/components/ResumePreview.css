@@ -113,8 +113,22 @@
 .experience-item.active-item,
 .education-item.active-item,
 .project-item.active-item {
-  border-left: 3px solid #9c27b0;
-  padding-left: 13px;
+  background: rgba(156, 39, 176, 0.1) !important;
+  border: 2px solid #9c27b0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+  animation: pulseBorder 2s ease-in-out infinite;
+}
+
+@keyframes pulseBorder {
+  0%, 100% {
+    border-color: #9c27b0;
+    box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
+  }
+  50% {
+    border-color: #ba68c8;
+    box-shadow: 0 4px 16px rgba(156, 39, 176, 0.4);
+  }
 }
 
 .item-header {

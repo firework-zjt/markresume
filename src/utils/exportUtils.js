@@ -3,13 +3,46 @@ import html2canvas from 'html2canvas'
 import { Document, Packer, Paragraph, TextRun } from 'docx'
 import { saveAs } from 'file-saver'
 
+// 临时移除选中状态的背景颜色
+const removeActiveStyles = () => {
+  const style = document.createElement('style')
+  style.id = 'export-hide-active-styles'
+  style.textContent = `
+    .resume-section.active-section {
+      background-color: transparent !important;
+      animation: none !important;
+    }
+    .experience-item.active-item,
+    .education-item.active-item,
+    .project-item.active-item {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      animation: none !important;
+    }
+  `
+  document.head.appendChild(style)
+  return style
+}
+
+// 恢复选中状态的背景颜色
+const restoreActiveStyles = (styleElement) => {
+  if (styleElement && styleElement.parentNode) {
+    styleElement.parentNode.removeChild(styleElement)
+  }
+}
+
 // 导出为 PDF
 export const exportToPDF = async (resumeData) => {
+  let activeStyleElement = null
   try {
     const previewElement = document.querySelector('.resume-preview')
     if (!previewElement) {
       throw new Error('找不到预览区域')
     }
+
+    // 临时移除选中状态的背景颜色
+    activeStyleElement = removeActiveStyles()
 
     // 保存原始样式和滚动位置
     const originalOverflow = previewElement.style.overflow
@@ -48,6 +81,9 @@ export const exportToPDF = async (resumeData) => {
     previewElement.style.overflow = originalOverflow
     previewElement.scrollTop = originalScrollTop
     previewElement.scrollLeft = originalScrollLeft
+    
+    // 恢复选中状态的背景颜色
+    restoreActiveStyles(activeStyleElement)
 
     const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF('p', 'mm', 'a4')
@@ -117,6 +153,8 @@ export const exportToPDF = async (resumeData) => {
   } catch (error) {
     console.error('导出 PDF 失败:', error)
     alert('导出 PDF 失败，请重试')
+    // 确保恢复样式
+    restoreActiveStyles(activeStyleElement)
   }
 }
 
@@ -398,11 +436,15 @@ export const exportToJSON = (resumeData) => {
 
 // 导出为 PNG 图片
 export const exportToPNG = async () => {
+  let activeStyleElement = null
   try {
     const previewElement = document.querySelector('.resume-preview')
     if (!previewElement) {
       throw new Error('找不到预览区域')
     }
+
+    // 临时移除选中状态的背景颜色
+    activeStyleElement = removeActiveStyles()
 
     // 保存原始样式和滚动位置
     const originalOverflow = previewElement.style.overflow
@@ -442,6 +484,9 @@ export const exportToPNG = async () => {
     previewElement.scrollTop = originalScrollTop
     previewElement.scrollLeft = originalScrollLeft
 
+    // 恢复选中状态的背景颜色
+    restoreActiveStyles(activeStyleElement)
+
     canvas.toBlob((blob) => {
       if (blob) {
         saveAs(blob, '简历.png')
@@ -450,5 +495,7 @@ export const exportToPNG = async () => {
   } catch (error) {
     console.error('导出 PNG 失败:', error)
     alert('导出 PNG 失败，请重试')
+    // 确保恢复样式
+    restoreActiveStyles(activeStyleElement)
   }
 }
