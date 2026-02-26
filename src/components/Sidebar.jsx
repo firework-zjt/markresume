@@ -2,8 +2,10 @@ import { useContext, useState, useRef, useEffect } from 'react'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { FaEdit } from 'react-icons/fa'
 import { ResumeContext } from '../App'
 import ConfirmDialog from './ConfirmDialog'
+import ModuleEditDialog from './ModuleEditDialog'
 import './Sidebar.css'
 
 const defaultModules = ['基本信息', '工作经历', '教育背景', '技能清单', '项目经历']
@@ -17,7 +19,9 @@ const commonModules = [
 ]
 
 // 可拖拽的模块项组件
-function SortableModuleItem({ module, isCustom, activeModule, onModuleClick, onDelete }) {
+function SortableModuleItem({ module, isCustom, activeModule, moduleIcon, onModuleClick, onDelete, onEdit }) {
+  // 所有模块都可以编辑
+  const [showEditBtn, setShowEditBtn] = useState(false)
   const {
     attributes,
     listeners,
@@ -39,6 +43,8 @@ function SortableModuleItem({ module, isCustom, activeModule, onModuleClick, onD
       style={style}
       id={`sidebar-${module}`}
       className={`module-item ${activeModule === module ? 'active' : ''} ${isCustom ? 'custom-module' : ''} ${isDragging ? 'dragging' : ''}`}
+      onMouseEnter={() => setShowEditBtn(true)}
+      onMouseLeave={() => setShowEditBtn(false)}
     >
       <div className="module-item-content" onClick={() => onModuleClick(module)}>
         <span 
@@ -49,20 +55,35 @@ function SortableModuleItem({ module, isCustom, activeModule, onModuleClick, onD
         >
           ⋮⋮
         </span>
+        {moduleIcon && <span className="module-icon">{moduleIcon}</span>}
         <span className="module-name">{module}</span>
       </div>
-      {isCustom && (
-        <button
-          className="btn-delete-module"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(module)
-          }}
-          title="删除模块"
-        >
-          ×
-        </button>
-      )}
+      <div className="module-item-actions">
+        {showEditBtn && (
+          <button
+            className="btn-edit-module"
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit(module)
+            }}
+            title="编辑模块"
+          >
+            <FaEdit />
+          </button>
+        )}
+        {isCustom && (
+          <button
+            className="btn-delete-module"
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete(module)
+            }}
+            title="删除模块"
+          >
+            ×
+          </button>
+        )}
+      </div>
     </li>
   )
 }
@@ -76,7 +97,9 @@ function Sidebar() {
     addCustomModule,
     deleteCustomModule,
     moduleOrder,
-    updateModuleOrder
+    updateModuleOrder,
+    moduleIcons,
+    updateModuleInfo
   } = useContext(ResumeContext)
 
   const sensors = useSensors(
@@ -90,6 +113,7 @@ function Sidebar() {
   const [showCustomInput, setShowCustomInput] = useState(false)
   const [newModuleName, setNewModuleName] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, moduleName: '' })
+  const [editDialog, setEditDialog] = useState({ isOpen: false, moduleName: '', moduleIcon: '' })
   const menuRef = useRef(null)
 
   // 点击外部关闭菜单
@@ -142,6 +166,19 @@ function Sidebar() {
   const confirmDelete = () => {
     deleteCustomModule(deleteConfirm.moduleName)
     setDeleteConfirm({ isOpen: false, moduleName: '' })
+  }
+
+  const handleEditModule = (moduleName) => {
+    setEditDialog({
+      isOpen: true,
+      moduleName,
+      moduleIcon: moduleIcons[moduleName] || '📝'
+    })
+  }
+
+  const handleSaveEdit = (newName, newIcon) => {
+    updateModuleInfo(editDialog.moduleName, newName, newIcon)
+    setEditDialog({ isOpen: false, moduleName: '', moduleIcon: '' })
   }
 
   // 处理拖拽结束
@@ -248,8 +285,10 @@ function Sidebar() {
                     module={module}
                     isCustom={isCustom}
                     activeModule={activeModule}
+                    moduleIcon={moduleIcons[module]}
                     onModuleClick={handleModuleClick}
                     onDelete={handleDeleteModule}
+                    onEdit={handleEditModule}
                   />
                 )
               })}
@@ -263,6 +302,13 @@ function Sidebar() {
         message={`确定要删除模块"${deleteConfirm.moduleName}"吗？此操作不可恢复。`}
         onConfirm={confirmDelete}
         onCancel={() => setDeleteConfirm({ isOpen: false, moduleName: '' })}
+      />
+      <ModuleEditDialog
+        isOpen={editDialog.isOpen}
+        moduleName={editDialog.moduleName}
+        moduleIcon={editDialog.moduleIcon}
+        onSave={handleSaveEdit}
+        onCancel={() => setEditDialog({ isOpen: false, moduleName: '', moduleIcon: '' })}
       />
     </>
   )

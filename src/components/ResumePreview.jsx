@@ -3,7 +3,7 @@ import { ResumeContext } from '../App'
 import './ResumePreview.css'
 
 function ResumePreview() {
-  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex, customModules, moduleOrder } = useContext(ResumeContext)
+  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex, customModules, moduleOrder, moduleIcons } = useContext(ResumeContext)
 
   // 处理模块区域点击
   const handleSectionClick = (moduleName) => {
@@ -28,6 +28,10 @@ function ResumePreview() {
         className={`resume-section basic-info clickable-section ${activeModule === '基本信息' ? 'active-section' : ''}`}
         onClick={() => handleSectionClick('基本信息')}
       >
+        <h2 className="section-title">
+          {moduleIcons['基本信息'] && <span className="section-icon">{moduleIcons['基本信息']}</span>}
+          基本信息
+        </h2>
         <div className="profile-header">
           {data.头像 && <img src={data.头像} alt="头像" className="avatar" />}
           <div className="profile-info">
@@ -54,7 +58,10 @@ function ResumePreview() {
         className={`resume-section clickable-section ${activeModule === '工作经历' ? 'active-section' : ''}`}
         onClick={() => handleSectionClick('工作经历')}
       >
-        <h2 className="section-title">工作经历</h2>
+        <h2 className="section-title">
+          {moduleIcons['工作经历'] && <span className="section-icon">{moduleIcons['工作经历']}</span>}
+          工作经历
+        </h2>
         {resumeData.工作经历.map((item, index) => (
           <div
             key={index}
@@ -90,7 +97,10 @@ function ResumePreview() {
         className={`resume-section clickable-section ${activeModule === '教育背景' ? 'active-section' : ''}`}
         onClick={() => handleSectionClick('教育背景')}
       >
-        <h2 className="section-title">教育背景</h2>
+        <h2 className="section-title">
+          {moduleIcons['教育背景'] && <span className="section-icon">{moduleIcons['教育背景']}</span>}
+          教育背景
+        </h2>
         {resumeData.教育背景.map((item, index) => (
           <div
             key={index}
@@ -126,7 +136,10 @@ function ResumePreview() {
         className={`resume-section clickable-section ${activeModule === '技能清单' ? 'active-section' : ''}`}
         onClick={() => handleSectionClick('技能清单')}
       >
-        <h2 className="section-title">技能清单</h2>
+        <h2 className="section-title">
+          {moduleIcons['技能清单'] && <span className="section-icon">{moduleIcons['技能清单']}</span>}
+          技能清单
+        </h2>
         {Object.entries(skills).map(([category, items]) => (
           <div key={category} className="skills-category">
             <strong>{category}:</strong> {items.join(', ')}
@@ -143,7 +156,10 @@ function ResumePreview() {
         className={`resume-section clickable-section ${activeModule === '项目经历' ? 'active-section' : ''}`}
         onClick={() => handleSectionClick('项目经历')}
       >
-        <h2 className="section-title">项目经历</h2>
+        <h2 className="section-title">
+          {moduleIcons['项目经历'] && <span className="section-icon">{moduleIcons['项目经历']}</span>}
+          项目经历
+        </h2>
         {resumeData.项目经历.map((item, index) => (
           <div
             key={index}
@@ -205,7 +221,10 @@ function ResumePreview() {
             className={`resume-section clickable-section ${activeModule === moduleName ? 'active-section' : ''}`}
             onClick={() => handleSectionClick(moduleName)}
           >
-            <h2 className="section-title">{moduleName}</h2>
+            <h2 className="section-title">
+              {moduleIcons[moduleName] && <span className="section-icon">{moduleIcons[moduleName]}</span>}
+              {moduleName}
+            </h2>
             <div className="custom-module-content">
               {moduleData.内容 ? (
                 <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{moduleData.内容}</p>

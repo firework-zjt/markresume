@@ -19,6 +19,14 @@ function App() {
   const [customModules, setCustomModules] = useState([])
   // 模块顺序（包含默认模块和自定义模块）
   const [moduleOrder, setModuleOrder] = useState(['基本信息', '工作经历', '教育背景', '技能清单', '项目经历'])
+  // 模块图标映射
+  const [moduleIcons, setModuleIcons] = useState({
+    '基本信息': '👤',
+    '工作经历': '💼',
+    '教育背景': '🎓',
+    '技能清单': '⚡',
+    '项目经历': '📁'
+  })
   
   // 简历数据
   const [resumeData, setResumeData] = useState({
@@ -142,7 +150,7 @@ function App() {
   }
 
   // 添加自定义模块
-  const addCustomModule = (moduleName) => {
+  const addCustomModule = (moduleName, icon = '📝') => {
     if (!moduleName || moduleName.trim() === '') return
     const trimmedName = moduleName.trim()
     
@@ -157,6 +165,12 @@ function App() {
     
     // 添加到模块顺序列表
     setModuleOrder(prev => [...prev, trimmedName])
+    
+    // 设置模块图标
+    setModuleIcons(prev => ({
+      ...prev,
+      [trimmedName]: icon
+    }))
     
     // 初始化模块数据（文本类型）
     setResumeData(prev => ({
@@ -175,6 +189,11 @@ function App() {
   const deleteCustomModule = (moduleName) => {
     setCustomModules(prev => prev.filter(name => name !== moduleName))
     setModuleOrder(prev => prev.filter(name => name !== moduleName))
+    setModuleIcons(prev => {
+      const newIcons = { ...prev }
+      delete newIcons[moduleName]
+      return newIcons
+    })
     setResumeData(prev => {
       const newData = { ...prev }
       delete newData[moduleName]
@@ -193,6 +212,49 @@ function App() {
     setModuleOrder(newOrder)
   }
 
+  // 更新模块信息（名称和图标）
+  const updateModuleInfo = (oldName, newName, icon) => {
+    // 如果名称改变，需要更新所有相关数据
+    if (oldName !== newName) {
+      // 更新模块顺序
+      setModuleOrder(prev => prev.map(name => name === oldName ? newName : name))
+      
+      // 更新自定义模块列表
+      if (customModules.includes(oldName)) {
+        setCustomModules(prev => prev.map(name => name === oldName ? newName : name))
+      }
+      
+      // 更新图标映射
+      setModuleIcons(prev => {
+        const newIcons = { ...prev }
+        newIcons[newName] = icon
+        delete newIcons[oldName]
+        return newIcons
+      })
+      
+      // 更新简历数据
+      setResumeData(prev => {
+        const newData = { ...prev }
+        if (newData[oldName]) {
+          newData[newName] = newData[oldName]
+          delete newData[oldName]
+        }
+        return newData
+      })
+      
+      // 如果当前选中的是旧名称，切换到新名称
+      if (activeModule === oldName) {
+        setActiveModule(newName)
+      }
+    } else {
+      // 只更新图标
+      setModuleIcons(prev => ({
+        ...prev,
+        [oldName]: icon
+      }))
+    }
+  }
+
   const contextValue = {
     activeModule,
     setActiveModule,
@@ -207,7 +269,9 @@ function App() {
     addCustomModule,
     deleteCustomModule,
     moduleOrder,
-    updateModuleOrder
+    updateModuleOrder,
+    moduleIcons,
+    updateModuleInfo
   }
 
   return (
