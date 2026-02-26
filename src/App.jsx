@@ -15,6 +15,10 @@ function App() {
   const [activeModule, setActiveModule] = useState('基本信息')
   // 当前选中的项目索引（用于工作经历、项目经历等列表项）
   const [activeItemIndex, setActiveItemIndex] = useState(0)
+  // 自定义模块列表
+  const [customModules, setCustomModules] = useState([])
+  // 模块顺序（包含默认模块和自定义模块）
+  const [moduleOrder, setModuleOrder] = useState(['基本信息', '工作经历', '教育背景', '技能清单', '项目经历'])
   
   // 简历数据
   const [resumeData, setResumeData] = useState({
@@ -137,6 +141,58 @@ function App() {
     }
   }
 
+  // 添加自定义模块
+  const addCustomModule = (moduleName) => {
+    if (!moduleName || moduleName.trim() === '') return
+    const trimmedName = moduleName.trim()
+    
+    // 检查是否已存在
+    if (moduleOrder.includes(trimmedName)) {
+      alert('该模块已存在')
+      return
+    }
+
+    // 添加到自定义模块列表
+    setCustomModules(prev => [...prev, trimmedName])
+    
+    // 添加到模块顺序列表
+    setModuleOrder(prev => [...prev, trimmedName])
+    
+    // 初始化模块数据（文本类型）
+    setResumeData(prev => ({
+      ...prev,
+      [trimmedName]: {
+        内容: ''
+      }
+    }))
+
+    // 切换到新添加的模块
+    setActiveModule(trimmedName)
+    setActiveItemIndex(0)
+  }
+
+  // 删除自定义模块（不再需要确认，由组件处理）
+  const deleteCustomModule = (moduleName) => {
+    setCustomModules(prev => prev.filter(name => name !== moduleName))
+    setModuleOrder(prev => prev.filter(name => name !== moduleName))
+    setResumeData(prev => {
+      const newData = { ...prev }
+      delete newData[moduleName]
+      return newData
+    })
+    
+    // 如果删除的是当前选中的模块，切换到基本信息
+    if (activeModule === moduleName) {
+      setActiveModule('基本信息')
+      setActiveItemIndex(0)
+    }
+  }
+
+  // 更新模块顺序
+  const updateModuleOrder = (newOrder) => {
+    setModuleOrder(newOrder)
+  }
+
   const contextValue = {
     activeModule,
     setActiveModule,
@@ -146,7 +202,12 @@ function App() {
     updateResumeData,
     updateListItem,
     addListItem,
-    deleteListItem
+    deleteListItem,
+    customModules,
+    addCustomModule,
+    deleteCustomModule,
+    moduleOrder,
+    updateModuleOrder
   }
 
   return (

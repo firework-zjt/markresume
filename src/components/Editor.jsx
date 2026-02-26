@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
 import { ResumeContext } from '../App'
+import ConfirmDialog from './ConfirmDialog'
 import './Editor.css'
 
 function Editor() {
@@ -10,10 +11,12 @@ function Editor() {
     updateResumeData,
     updateListItem,
     addListItem,
-    deleteListItem
+    deleteListItem,
+    customModules
   } = useContext(ResumeContext)
 
   const [newHighlight, setNewHighlight] = useState('')
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, module: '', index: -1 })
 
   // 获取当前编辑的数据
   const getCurrentData = () => {
@@ -46,6 +49,17 @@ function Editor() {
   const handleDeleteHighlight = (index) => {
     const highlights = currentData.亮点.filter((_, i) => i !== index)
     handleInputChange('亮点', highlights)
+  }
+
+  // 处理删除列表项（显示确认弹窗）
+  const handleDeleteItem = (module, index) => {
+    setDeleteConfirm({ isOpen: true, module, index })
+  }
+
+  // 确认删除列表项
+  const confirmDeleteItem = () => {
+    deleteListItem(deleteConfirm.module, deleteConfirm.index)
+    setDeleteConfirm({ isOpen: false, module: '', index: -1 })
   }
 
   // 添加新项目
@@ -160,7 +174,7 @@ function Editor() {
           {resumeData.工作经历.length > 1 && (
             <button
               className="btn-delete"
-              onClick={() => deleteListItem(activeModule, activeItemIndex)}
+              onClick={() => handleDeleteItem(activeModule, activeItemIndex)}
             >
               删除
             </button>
@@ -252,7 +266,7 @@ function Editor() {
           {resumeData.教育背景.length > 1 && (
             <button
               className="btn-delete"
-              onClick={() => deleteListItem(activeModule, activeItemIndex)}
+              onClick={() => handleDeleteItem(activeModule, activeItemIndex)}
             >
               删除
             </button>
@@ -369,7 +383,7 @@ function Editor() {
           {resumeData.项目经历.length > 1 && (
             <button
               className="btn-delete"
-              onClick={() => deleteListItem(activeModule, activeItemIndex)}
+              onClick={() => handleDeleteItem(activeModule, activeItemIndex)}
             >
               删除
             </button>
@@ -424,7 +438,33 @@ function Editor() {
     )
   }
 
+  // 渲染自定义模块编辑器
+  const renderCustomModuleEditor = () => {
+    const currentData = resumeData[activeModule] || {}
+    return (
+      <div className="editor-form">
+        <div className="form-group">
+          <label>内容</label>
+          <textarea
+            value={currentData.内容 || ''}
+            onChange={(e) => updateResumeData(activeModule, { 内容: e.target.value })}
+            rows="10"
+            placeholder="输入模块内容..."
+          />
+        </div>
+        <div className="form-tip">
+          <p>💡 提示：支持多行文本，可以输入任意内容</p>
+        </div>
+      </div>
+    )
+  }
+
   const renderEditor = () => {
+    // 如果是自定义模块
+    if (customModules.includes(activeModule)) {
+      return renderCustomModuleEditor()
+    }
+
     switch (activeModule) {
       case '基本信息':
         return renderBasicInfoEditor()
@@ -454,6 +494,13 @@ function Editor() {
       <div className="editor-content">
         {renderEditor()}
       </div>
+      <ConfirmDialog
+        isOpen={deleteConfirm.isOpen}
+        title="删除项目"
+        message={`确定要删除这个${deleteConfirm.module === '工作经历' ? '工作经历' : deleteConfirm.module === '教育背景' ? '教育经历' : '项目经历'}吗？此操作不可恢复。`}
+        onConfirm={confirmDeleteItem}
+        onCancel={() => setDeleteConfirm({ isOpen: false, module: '', index: -1 })}
+      />
     </aside>
   )
 }

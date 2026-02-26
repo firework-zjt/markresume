@@ -3,7 +3,7 @@ import { ResumeContext } from '../App'
 import './ResumePreview.css'
 
 function ResumePreview() {
-  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex } = useContext(ResumeContext)
+  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex, customModules, moduleOrder } = useContext(ResumeContext)
 
   // 处理模块区域点击
   const handleSectionClick = (moduleName) => {
@@ -170,13 +170,58 @@ function ResumePreview() {
     )
   }
 
+  // 根据模块顺序渲染所有模块
+  const renderAllModules = () => {
+    const moduleRenderMap = {
+      '基本信息': renderBasicInfo,
+      '工作经历': renderWorkExperience,
+      '教育背景': renderEducation,
+      '技能清单': renderSkills,
+      '项目经历': renderProjects
+    }
+
+    return moduleOrder.map(moduleName => {
+      // 如果是默认模块，使用对应的渲染函数
+      if (moduleRenderMap[moduleName]) {
+        return <div key={moduleName}>{moduleRenderMap[moduleName]()}</div>
+      }
+      // 如果是自定义模块，在renderCustomModulesInOrder中处理
+      return null
+    })
+  }
+
+  // 渲染自定义模块（按顺序）
+  const renderCustomModulesInOrder = () => {
+    return moduleOrder
+      .filter(moduleName => customModules.includes(moduleName))
+      .map(moduleName => {
+        const moduleData = resumeData[moduleName]
+        if (!moduleData) return null
+
+        return (
+          <div
+            key={moduleName}
+            id={`preview-${moduleName}`}
+            className={`resume-section clickable-section ${activeModule === moduleName ? 'active-section' : ''}`}
+            onClick={() => handleSectionClick(moduleName)}
+          >
+            <h2 className="section-title">{moduleName}</h2>
+            <div className="custom-module-content">
+              {moduleData.内容 ? (
+                <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{moduleData.内容}</p>
+              ) : (
+                <p style={{ color: '#999', fontStyle: 'italic' }}>暂无内容</p>
+              )}
+            </div>
+          </div>
+        )
+      })
+  }
+
   return (
     <main className="resume-preview">
-      {renderBasicInfo()}
-      {renderWorkExperience()}
-      {renderEducation()}
-      {renderSkills()}
-      {renderProjects()}
+      {renderAllModules()}
+      {renderCustomModulesInOrder()}
     </main>
   )
 }
