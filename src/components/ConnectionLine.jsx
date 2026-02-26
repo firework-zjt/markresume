@@ -109,9 +109,14 @@ function ConnectionLine() {
 
   // 当模块或项目索引改变时，延迟更新以确保 DOM 已渲染
   useEffect(() => {
+    // 立即更新一次
+    setUpdateKey(prev => prev + 1)
+    
+    // 延迟更新以确保 DOM 完全渲染
     const timer = setTimeout(() => {
       setUpdateKey(prev => prev + 1)
-    }, 100)
+    }, 150)
+    
     return () => clearTimeout(timer)
   }, [activeModule, activeItemIndex])
 

@@ -3,9 +3,20 @@ import { ResumeContext } from '../App'
 import './ResumePreview.css'
 
 function ResumePreview() {
-  const { resumeData, activeModule, activeItemIndex, setActiveItemIndex } = useContext(ResumeContext)
+  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex } = useContext(ResumeContext)
 
-  const handleItemClick = (index) => {
+  // 处理模块区域点击
+  const handleSectionClick = (moduleName) => {
+    setActiveModule(moduleName)
+    // 如果是列表类型模块，选中第一项
+    if (['工作经历', '教育背景', '项目经历'].includes(moduleName)) {
+      setActiveItemIndex(0)
+    }
+  }
+
+  // 处理列表项点击
+  const handleItemClick = (moduleName, index) => {
+    setActiveModule(moduleName)
     setActiveItemIndex(index)
   }
 
@@ -14,7 +25,8 @@ function ResumePreview() {
     return (
       <div 
         id="preview-基本信息"
-        className={`resume-section basic-info ${activeModule === '基本信息' ? 'active-section' : ''}`}
+        className={`resume-section basic-info clickable-section ${activeModule === '基本信息' ? 'active-section' : ''}`}
+        onClick={() => handleSectionClick('基本信息')}
       >
         <div className="profile-header">
           {data.头像 && <img src={data.头像} alt="头像" className="avatar" />}
@@ -39,15 +51,19 @@ function ResumePreview() {
     return (
       <div 
         id="preview-工作经历"
-        className={`resume-section ${activeModule === '工作经历' ? 'active-section' : ''}`}
+        className={`resume-section clickable-section ${activeModule === '工作经历' ? 'active-section' : ''}`}
+        onClick={() => handleSectionClick('工作经历')}
       >
         <h2 className="section-title">工作经历</h2>
         {resumeData.工作经历.map((item, index) => (
           <div
             key={index}
-            id={activeModule === '工作经历' && activeItemIndex === index ? `preview-工作经历-item-${index}` : undefined}
-            className={`experience-item ${activeModule === '工作经历' ? 'clickable' : ''} ${activeModule === '工作经历' && activeItemIndex === index ? 'active-item' : ''}`}
-            onClick={() => activeModule === '工作经历' && handleItemClick(index)}
+            id={`preview-工作经历-item-${index}`}
+            className={`experience-item clickable ${activeModule === '工作经历' && activeItemIndex === index ? 'active-item' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation() // 阻止事件冒泡到父元素
+              handleItemClick('工作经历', index)
+            }}
           >
             <div className="item-header">
               <h3>{item.职位}</h3>
@@ -71,15 +87,19 @@ function ResumePreview() {
     return (
       <div 
         id="preview-教育背景"
-        className={`resume-section ${activeModule === '教育背景' ? 'active-section' : ''}`}
+        className={`resume-section clickable-section ${activeModule === '教育背景' ? 'active-section' : ''}`}
+        onClick={() => handleSectionClick('教育背景')}
       >
         <h2 className="section-title">教育背景</h2>
         {resumeData.教育背景.map((item, index) => (
           <div
             key={index}
-            id={activeModule === '教育背景' && activeItemIndex === index ? `preview-教育背景-item-${index}` : undefined}
-            className={`education-item ${activeModule === '教育背景' ? 'clickable' : ''} ${activeModule === '教育背景' && activeItemIndex === index ? 'active-item' : ''}`}
-            onClick={() => activeModule === '教育背景' && handleItemClick(index)}
+            id={`preview-教育背景-item-${index}`}
+            className={`education-item clickable ${activeModule === '教育背景' && activeItemIndex === index ? 'active-item' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation() // 阻止事件冒泡到父元素
+              handleItemClick('教育背景', index)
+            }}
           >
             <div className="item-header">
               <h3>{item.学校}</h3>
@@ -103,7 +123,8 @@ function ResumePreview() {
     return (
       <div 
         id="preview-技能清单"
-        className={`resume-section ${activeModule === '技能清单' ? 'active-section' : ''}`}
+        className={`resume-section clickable-section ${activeModule === '技能清单' ? 'active-section' : ''}`}
+        onClick={() => handleSectionClick('技能清单')}
       >
         <h2 className="section-title">技能清单</h2>
         {Object.entries(skills).map(([category, items]) => (
@@ -119,15 +140,19 @@ function ResumePreview() {
     return (
       <div 
         id="preview-项目经历"
-        className={`resume-section ${activeModule === '项目经历' ? 'active-section' : ''}`}
+        className={`resume-section clickable-section ${activeModule === '项目经历' ? 'active-section' : ''}`}
+        onClick={() => handleSectionClick('项目经历')}
       >
         <h2 className="section-title">项目经历</h2>
         {resumeData.项目经历.map((item, index) => (
           <div
             key={index}
-            id={activeModule === '项目经历' && activeItemIndex === index ? `preview-项目经历-item-${index}` : undefined}
-            className={`project-item ${activeModule === '项目经历' ? 'clickable' : ''} ${activeModule === '项目经历' && activeItemIndex === index ? 'active-item' : ''}`}
-            onClick={() => activeModule === '项目经历' && handleItemClick(index)}
+            id={`preview-项目经历-item-${index}`}
+            className={`project-item clickable ${activeModule === '项目经历' && activeItemIndex === index ? 'active-item' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation() // 阻止事件冒泡到父元素
+              handleItemClick('项目经历', index)
+            }}
           >
             <div className="item-header">
               <h3>{item.项目名称}</h3>

@@ -14,6 +14,20 @@
   transition: all 0.3s ease;
 }
 
+.resume-section.clickable-section {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resume-section.clickable-section:hover {
+  opacity: 0.95;
+}
+
+.resume-section.clickable-section:active {
+  opacity: 0.9;
+  transform: scale(0.998);
+}
+
 .resume-section.active-section {
   animation: highlightSection 0.5s ease;
 }
