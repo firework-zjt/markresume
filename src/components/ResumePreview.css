@@ -30,11 +30,23 @@
 
 .resume-section.active-section {
   animation: highlightSection 0.5s ease;
+  background: rgba(156, 39, 176, 0.1) !important;
+  border: 2px solid #9c27b0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: -16px -16px 16px -16px;
+  box-shadow: 0 4px 12px rgba(156, 39, 176, 0.2);
 }
 
 .resume-section.active-section .section-title {
   color: #9c27b0;
   border-bottom-color: #9c27b0;
+}
+
+/* 基本信息特殊处理 */
+.resume-section.basic-info.active-section {
+  padding: 16px;
+  margin: -16px -16px 16px -16px;
 }
 
 @keyframes highlightSection {
