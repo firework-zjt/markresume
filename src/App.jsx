@@ -27,6 +27,13 @@ function App() {
     '技能清单': '⚡',
     '项目经历': '📁'
   })
+
+  // 简历样式配置
+  const [resumeStyles, setResumeStyles] = useState({
+    primaryColor: '#9c27b0',
+    fontSize: 'medium',
+    lineHeight: 'normal'
+  })
   
   // 简历数据
   const [resumeData, setResumeData] = useState({
@@ -218,12 +225,12 @@ function App() {
     if (oldName !== newName) {
       // 更新模块顺序
       setModuleOrder(prev => prev.map(name => name === oldName ? newName : name))
-      
+
       // 更新自定义模块列表
       if (customModules.includes(oldName)) {
         setCustomModules(prev => prev.map(name => name === oldName ? newName : name))
       }
-      
+
       // 更新图标映射
       setModuleIcons(prev => {
         const newIcons = { ...prev }
@@ -231,7 +238,7 @@ function App() {
         delete newIcons[oldName]
         return newIcons
       })
-      
+
       // 更新简历数据
       setResumeData(prev => {
         const newData = { ...prev }
@@ -241,7 +248,7 @@ function App() {
         }
         return newData
       })
-      
+
       // 如果当前选中的是旧名称，切换到新名称
       if (activeModule === oldName) {
         setActiveModule(newName)
@@ -253,6 +260,11 @@ function App() {
         [oldName]: icon
       }))
     }
+  }
+
+  // 更新简历样式
+  const updateResumeStyles = (newStyles) => {
+    setResumeStyles(newStyles)
   }
 
   const contextValue = {
@@ -271,7 +283,9 @@ function App() {
     moduleOrder,
     updateModuleOrder,
     moduleIcons,
-    updateModuleInfo
+    updateModuleInfo,
+    resumeStyles,
+    updateResumeStyles
   }
 
   return (

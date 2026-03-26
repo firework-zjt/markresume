@@ -6,6 +6,74 @@
   margin: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --primary-color: #9c27b0;
+}
+
+/* 字体大小变量 */
+.resume-preview.font-small {
+  --font-title: 18px;
+  --font-section: 16px;
+  --font-content: 12px;
+}
+
+.resume-preview.font-medium {
+  --font-title: 28px;
+  --font-section: 20px;
+  --font-content: 14px;
+}
+
+.resume-preview.font-large {
+  --font-title: 36px;
+  --font-section: 24px;
+  --font-content: 16px;
+}
+
+/* 行间距变量 */
+.resume-preview.line-height-compact {
+  --line-height: 1.4;
+}
+
+.resume-preview.line-height-normal {
+  --line-height: 1.6;
+}
+
+.resume-preview.line-height-loose {
+  --line-height: 1.8;
+}
+
+.resume-section.active-section {
+  animation: highlightSection 0.5s ease;
+  background: rgba(var(--primary-color-rgb, 156, 39, 176), 0.1) !important;
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  padding: 16px;
+  margin: -16px -16px 16px -16px;
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb, 156, 39, 176), 0.2);
+}
+
+.resume-section.active-section .section-title {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.experience-item.active-item,
+.education-item.active-item,
+.project-item.active-item {
+  background: rgba(var(--primary-color-rgb, 156, 39, 176), 0.1) !important;
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(var(--primary-color-rgb, 156, 39, 176), 0.2);
+  animation: pulseBorder 2s ease-in-out infinite;
+}
+
+@keyframes pulseBorder {
+  0%, 100% {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(var(--primary-color-rgb, 156, 39, 176), 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(var(--primary-color-rgb, 156, 39, 176), 0.4);
+  }
 }
 
 .resume-section {
@@ -231,4 +299,50 @@
 .skills-category strong {
   color: #333;
   margin-right: 8px;
+}
+
+/* 字体大小响应式样式 */
+.resume-preview.font-small .profile-info h1 {
+  font-size: 18px;
+}
+
+.resume-preview.font-small .section-title {
+  font-size: 16px;
+}
+
+.resume-preview.font-small .item-header h3 {
+  font-size: 14px;
+}
+
+.resume-preview.font-large .profile-info h1 {
+  font-size: 36px;
+}
+
+.resume-preview.font-large .section-title {
+  font-size: 24px;
+}
+
+.resume-preview.font-large .item-header h3 {
+  font-size: 18px;
+}
+
+/* 行间距响应式样式 */
+.resume-preview.line-height-compact .responsibility,
+.resume-preview.line-height-compact .description,
+.resume-preview.line-height-compact .intro {
+  line-height: 1.4;
+}
+
+.resume-preview.line-height-loose .responsibility,
+.resume-preview.line-height-loose .description,
+.resume-preview.line-height-loose .intro {
+  line-height: 1.8;
+}
+
+.resume-preview.line-height-compact .highlights li {
+  line-height: 1.6;
+}
+
+.resume-preview.line-height-loose .highlights li {
+  line-height: 2;
 }

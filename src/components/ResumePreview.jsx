@@ -3,7 +3,22 @@ import { ResumeContext } from '../App'
 import './ResumePreview.css'
 
 function ResumePreview() {
-  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex, customModules, moduleOrder, moduleIcons } = useContext(ResumeContext)
+  const { resumeData, activeModule, activeItemIndex, setActiveModule, setActiveItemIndex, customModules, moduleOrder, moduleIcons, resumeStyles } = useContext(ResumeContext)
+
+  // 获取样式类名
+  const getStyleClasses = () => {
+    const classes = ['resume-preview']
+    if (resumeStyles.fontSize) classes.push(`font-${resumeStyles.fontSize}`)
+    if (resumeStyles.lineHeight) classes.push(`line-height-${resumeStyles.lineHeight}`)
+    return classes.join(' ')
+  }
+
+  // 获取主题色 CSS 变量
+  const getThemeStyle = () => {
+    return {
+      '--primary-color': resumeStyles.primaryColor || '#9c27b0'
+    }
+  }
 
   // 处理模块区域点击
   const handleSectionClick = (moduleName) => {
@@ -238,7 +253,7 @@ function ResumePreview() {
   }
 
   return (
-    <main className="resume-preview">
+    <main className={getStyleClasses()} style={getThemeStyle()}>
       {renderAllModules()}
       {renderCustomModulesInOrder()}
     </main>
